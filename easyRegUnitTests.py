@@ -17,7 +17,12 @@ test_key3 = "HKEY_LOCAL_MACHINE\SOFTWARE\FileZilla 3\fzshellext"
 
 #print easyReg.easyQueryValue(test_key1, "File")
 
-easyReg.easySaveKey(test_key1 + "\\Test", "out.weee")
+def test_fn:
+	print "derp"
+
+easyReg.walkReg(easyReg.easyOpenkey("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles", 1, test_fn)
+
+#easyReg.easySaveKey(test_key1 + "\\Test", "out.weee")
 
 #easyReg.easyCreateKey(test_key1, "Test")
 
