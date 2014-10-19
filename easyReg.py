@@ -246,9 +246,10 @@ def listValues(s):
 			return values
 
 ## walkReg - Walks through the registry starting at a specified key or Hive.
-## k - A registry key object.
-## n - The maximum number of levels of subkeys to walk. Will be decremented in each iteration.
-def walkReg(k, n):
+## k  - A registry key object.
+## n  - The maximum number of levels of subkeys to walk. Will be decremented in each iteration.
+## fn - A user-defined function to be run each time walkReg runs.
+def walkReg(k, n, fn):
 	if (n > 0):
 		## Loop through the subkeys until you run out.
 		for i in range(1024):
