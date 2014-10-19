@@ -1,6 +1,8 @@
 ## easyReg.py
 ## A simple wrapper module for _winreg.
 
+## TODO - Update walkReg method to take in a user-defined function as a parameter. 
+
 ## Terminology  - To attempt to reduce confusion, here are some definitions of commonly used terms.
 ## Key          - A registry key.
 ## Subkey       - A key that resides directly under a key.
@@ -23,7 +25,10 @@ class RegKey():
 		self.handle          = easyOpenKey(path)
 		self.path            = path		
 		self.name            = self.path.split("\\")[-1]
-		self.parent          = self.path.split("\\")[-2]		
+		if (len(self.path.split("\\") > 0)):
+			self.parent      = self.path.split("\\")[-2]
+		else:
+			self.parent      = ""
 		self.list_of_subkeys = []
 		self.list_of_entries = []
 
@@ -39,7 +44,7 @@ class RegKey():
 	## Takes in a series of booleans to determine what is print. Input will later be a bit-mask.
 	## b_e - Boolean determining if the list of entries is printed.
 	## b_k - Bool determining if the list of subkeys is printed.
-	def printRegKey(self, b_e, b_s):	
+	def printRegKey(self, b_e, b_s):
 		print "Name: " + self.name
 		print " Handle: " + str(self.handle)
 		print " Parent: " + self.parent
@@ -49,7 +54,7 @@ class RegKey():
 			print "  List of Entries..." 
 			for entry in self.list_of_entries:
 				entry.printEntry()
-
+	
 		if (b_s == 1):
 			print "  List of Subkeys..."
 			for key in self.list_of_subkeys:
@@ -60,12 +65,10 @@ class RegKey():
 ## RegEntry - A class which contains many attributes describing a registry entry.
 class RegEntry():
 	## __init__   - Initialize the attributes of a User object.
-	## self.tuple - The device information passed in as-is from the registry.
 	## self.value - Corresponds to the Name column in regedit.
 	## self.type  - Corresponds to the type column in regedit.
 	## self.data  - Corresponds to the data column in regedit.
 	def __init__(self, tuple):
-		self.tuple = tuple
 		self.value = tuple[0]
 		if   (tuple[2] == 2):
 			self.type = "REG_EXPAND_SZ"
@@ -110,7 +113,21 @@ def easyDeleteKey(s):
 def easyDeleteValue(s, v):
 	_winreg.DeleteValue(easyOpenKey(s), v)
 
-## easyOpenKey - A function which takes in a Registry key as a string and returns a handle to the key specified.
+
+## easyGetEntry - A function which returns a subkey of the provided key as a string.
+## s - The key provided by the user. (string)
+## i - The index of the subkey within the key. (int)	
+def easyGetSubkey(s, i):
+	print _winreg.EnumKey(easyOpenKey(s), i)
+	return _winreg.EnumKey(easyOpenKey(s), i)
+
+## easyGetValue - A function which returns a name, data, type tuple for a registry entry.
+## s - The key provided by the user. (string)
+## i - The index of the registry entry within the key. (int)
+def easyGetValue(s, i):
+	return _winreg.EnumValue(easyOpenKey(s), i)
+	
+## easyOpenKey - A function which returns a handle to the key specified.
 ## s - The key provided by the user. (string)
 def easyOpenKey(s):
 	## Create a list containing the hive and the name of the Registry key.
@@ -252,7 +269,6 @@ def walkReg(k, n):
 			except EnvironmentError:
 				## Sort the list of registry entries.
 				k.list_of_entries.sort(key=lambda e: e.value, reverse=False)		
-				#k.printRegKey(1, 1)
 				break
 
 		## Recursively go through all of the sub entries until you run out of information of n = 0
