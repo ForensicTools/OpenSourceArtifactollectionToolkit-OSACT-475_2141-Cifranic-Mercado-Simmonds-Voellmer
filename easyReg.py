@@ -25,7 +25,7 @@ class RegKey():
 		self.handle          = easyOpenKey(path)
 		self.path            = path		
 		self.name            = self.path.split("\\")[-1]
-		if (len(self.path.split("\\") > 0)):
+		if (len(self.path.split("\\")) > 0):
 			self.parent      = self.path.split("\\")[-2]
 		else:
 			self.parent      = ""
@@ -271,9 +271,12 @@ def walkReg(k, n, fn):
 				## Sort the list of registry entries.
 				k.list_of_entries.sort(key=lambda e: e.value, reverse=False)		
 				break
-
+		
+		## Call the user-defined function.
+		fn()
+		
 		## Recursively go through all of the sub entries until you run out of information of n = 0
 		for subkey in k.list_of_subkeys:
-			walkReg(subkey, (n - 1))	
+			walkReg(subkey, (n - 1), fn)	
 	else:
 		return
