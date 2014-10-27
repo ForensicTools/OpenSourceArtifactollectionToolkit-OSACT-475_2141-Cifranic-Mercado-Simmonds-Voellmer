@@ -272,11 +272,12 @@ def walkReg(k, n, fn):
 				k.list_of_entries.sort(key=lambda e: e.value, reverse=False)		
 				break
 		
-		## Call the user-defined function.
-		fn()
+
 		
 		## Recursively go through all of the sub entries until you run out of information of n = 0
 		for subkey in k.list_of_subkeys:
+			## Call the user-defined function.
+			fn()
 			walkReg(subkey, (n - 1), fn)	
 	else:
 		return
