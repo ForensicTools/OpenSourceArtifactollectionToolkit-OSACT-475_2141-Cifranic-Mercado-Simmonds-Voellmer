@@ -25,7 +25,7 @@ class RegKey():
 		self.handle          = easyOpenKey(path)
 		self.path            = path		
 		self.name            = self.path.split("\\")[-1]
-		if (len(self.path.split("\\") > 0)):
+		if (len(self.path.split("\\")) > 0):
 			self.parent      = self.path.split("\\")[-2]
 		else:
 			self.parent      = ""
@@ -246,9 +246,10 @@ def listValues(s):
 			return values
 
 ## walkReg - Walks through the registry starting at a specified key or Hive.
-## k - A registry key object.
-## n - The maximum number of levels of subkeys to walk. Will be decremented in each iteration.
-def walkReg(k, n):
+## k  - A registry key object.
+## n  - The maximum number of levels of subkeys to walk. Will be decremented in each iteration.
+## fn - A user-defined function to be run each time walkReg runs.
+def walkReg(k, n, fn):
 	if (n > 0):
 		## Loop through the subkeys until you run out.
 		for i in range(1024):
@@ -270,9 +271,13 @@ def walkReg(k, n):
 				## Sort the list of registry entries.
 				k.list_of_entries.sort(key=lambda e: e.value, reverse=False)		
 				break
+		
 
+		
 		## Recursively go through all of the sub entries until you run out of information of n = 0
 		for subkey in k.list_of_subkeys:
-			walkReg(subkey, (n - 1))	
+			## Call the user-defined function.
+			fn()
+			walkReg(subkey, (n - 1), fn)	
 	else:
 		return
