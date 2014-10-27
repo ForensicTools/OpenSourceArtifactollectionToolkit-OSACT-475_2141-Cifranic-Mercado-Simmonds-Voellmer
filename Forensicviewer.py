@@ -3,8 +3,8 @@ import subprocess
 
 # This will allow for debugging.
 bool_debug = 1
-sysinternal_dir = 'I:\Windows Forensics\project\SysinternalsSuite\\'
-sysinternal_dir1 = 'I:\Windows Forensics\project\SysinternalsSuite\\'
+# sysinternal_dir = 'I:\Windows Forensics\project\SysinternalsSuite\\'
+# sysinternal_dir1 = 'I:\Windows Forensics\project\SysinternalsSuite\\'
 # This function returns the output of ipconfig.
 def getIpconfig():
 	ipconfig = subprocess.check_output('ipconfig /all')
@@ -16,11 +16,11 @@ def getWhoami():
 	return whoami
 # This fuction returns the output of PSlist	
 def getPslist():
-	pslist = subprocess.check_output(sysinternal_dir + 'pslist')
+	pslist = subprocess.check_output('.\systeminternals\pslist')
 	return pslist
 # This function returns the output of PsLoggedon	
 def getPsLoggedon():
-	PsLoggedon = subprocess.check_output(sysinternal_dir1 + 'PsLoggedon')
+	PsLoggedon = subprocess.check_output('.\systeminternals\PsLoggedon')
 	return PsLoggedon	
 	
 # This if statement allows for debugging of ipconfig & whoami is true. 	
