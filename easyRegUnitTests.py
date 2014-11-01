@@ -1,24 +1,42 @@
 ## easyRegUnitTests.py
 
-import easyReg
+## Import easyReg for testing and sys for argv and exit.
+import easyReg, sys
 
-#easyReg.easySetValue("weee", "test", "bork", "weeeeee")
-
+## Test keys to initialize RegKey objects.
 test_key1 = "HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\EventLog\Application"
-test_key4 = "HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\EventLog\Application\test"
-test_key2 = "HKEY_CURRENT_USER\Console"
-test_key3 = "HKEY_LOCAL_MACHINE\SOFTWARE\FileZilla 3\fzshellext"
-#for each in easyReg.listSubkeys(test_key1):
-	#print each
+test_key2 = "HKEY_LOCAL_MACHINE\SYSTEM\Select"
+test_key3 = "HKEY_LOCAL_MACHINE\SYSTEM"
 
-#print ""
+## A test function which takes a list as a parameter for testing with walkReg.
+test_list = [1, 2, 3]
+def test_fn(test_list):
+	print "derp"
 
-#print easyReg.easyQueryKey(test_key1)
+## Initialize RegKey Objects
+## HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\EventLog\Application has entries and subkeys.
+## HKEY_LOCAL_MACHINE\SYSTEM\Select has entries but no subkeys.
+## HKEY_LOCAL_MACHINE\SYSTEM has subkeys but no entries.
+test_regkey1 = easyReg.RegKey(test_key1)
+test_regkey2 = easyReg.RegKey(test_key2)
+test_regkey3 = easyReg.RegKey(test_key3)
 
-#print easyReg.easyQueryValue(test_key1, "File")
+## Populate the entries and subkeys of the RegKey objects.
+test_regkey1.populateEntries()
+test_regkey1.populateSubkeys()
 
-easyReg.easySaveKey(test_key1 + "\\Test", "out.weee")
+test_regkey2.populateEntries()
+test_regkey2.populateSubkeys()
 
-#easyReg.easyCreateKey(test_key1, "Test")
+test_regkey3.populateEntries()
+test_regkey3.populateSubkeys()
 
-#easyReg.easyDeleteValue(test_key1, "File")
+
+sys.exit()
+test_regkey2.printRegKey()
+test_regkey2.removeEntry("Current")
+test_regkey2.printRegKey()
+
+test_regkey3.printRegKey()
+test_regkey3.removeSubkey("ControlSet001")
+test_regkey3.printRegKey()
