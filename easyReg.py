@@ -119,10 +119,10 @@ class RegEntry():
 	
 	## netcatEntry - Send the information of interest to the NC listener.
 	## s - A network socket which is connected to a netcat listener.
-	def netcatEntry(self, s):
-		s.send("   Value: " + self.value + "\n")
-		s.send("    Type: " + str(self.type) + "\n")
-		s.send("    Data: " + str(self.data) + "\n\n")
+	#def netcatEntry(self, s):
+		#s.send("   Value: " + self.value + "\n")
+		#s.send("    Type: " + str(self.type) + "\n")
+		#s.send("    Data: " + str(self.data) + "\n\n")
 	
 ##End of RegEntry class					
 
@@ -301,8 +301,6 @@ def walkReg(k, n, fn, l):
 				k.list_of_entries.sort(key=lambda e: e.value, reverse=False)		
 				break
 		
-
-		
 		## Recursively go through all of the sub entries until you run out of information of n = 0
 		for subkey in k.list_of_subkeys:
 			## Call the user-defined function.
@@ -310,3 +308,6 @@ def walkReg(k, n, fn, l):
 			walkReg(subkey, (n - 1), fn)	
 	else:
 		return
+		
+## End of helper functions
+## End of easyReg.py
