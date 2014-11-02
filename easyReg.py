@@ -1,7 +1,9 @@
 ## easyReg.py
 ## A simple wrapper module for _winreg.
+## This module provides easy access to registry keys via strings as well objects to store registry keys and entries.
 
-## TODO         - Write functions to return info rather than print in RegKey + RegEntry. [IN-PROGRESS] 
+## TODO         - Modify walkReg's fn function to take a list as a parameter. [TESTING REQUIRED]
+##				- Write functions to return info rather than print in RegKey + RegEntry. [DONE]
 
 ## Terminology  - To attempt to reduce confusion, here are some definitions of commonly used terms.
 ## Key          - A registry key.
@@ -43,38 +45,43 @@ class RegKey():
 	## getEntries - Returns a list of tuples containing the value, type and data of each entry.
 	def getEntries(self):
 		self.tuples = []
-		self.values = []
-		self.types  = []
-		self.datas  = []
 		
-		for entry in list_of_entries:
-			self.values.append(entry.value)
-			self.types.append(entry.type)
-			self.datas.append(entry.data)
-		
-		self.tuples = zip(self.values, self.types, self.datas)
+		for entry in self.list_of_entries:
+			self.tuples.append(entry.getRegEntry())
+
 		return self.tuples
 		
 	## Returns a summary about the current RegKey object as a tuple.
-	## 0 - Handle of the RegKey
-	## 1 - Path of the RegKey
-	## 2 - Name of the RegKey
-	## 3 - Parent of this RegKey
-	## 4 - # of entries in the RegKey
-	## 5 - # of subkeys under this entry
+	## 0 - Handle of the RegKey object
+	## 1 - Path of the RegKey object
+	## 2 - Name of the RegKey object
+	## 3 - Parent of this RegKey object
+	## 4 - # of entries in the RegKey object
+	## 5 - # of subkeys under this RegKey object
+	## 6 - A list containing the names of the entries of this RegKey object.
+	## 7 - A list containing the names of the subkeys of this RegKey object.
 	def getRegKey(self):
-		return self.handle, self.path, self.name, self.parent, len(self.list_of_entries), len(self.list_of_subkeys)
+		self.entry_names  = []
+		self.subkey_names = []
+		
+		for entry in self.list_of_entries:
+			self.entry_names.append(entry.value)
+			
+		for key in self.list_of_subkeys:
+			self.subkey_names.append(key.name)
+		
+		return self.handle, self.path, self.name, self.parent, len(self.list_of_entries), len(self.list_of_subkeys), self.entry_names, self.subkey_names
 	
-	##  getSubkeys - Returns a tuples containing the names, paths and handles of each subkey.
+	##  getSubkeys - Returns a tuples containing the handles (Addresses of PyHKEY objects). paths and names of each subkey of this RegKey object.
 	def getSubkeys(self):
 		self.handles = []
 		self.paths   = []
 		self.names   = []
 		
-		for key in list_of_subkeys:
+		for key in self.list_of_subkeys:
 			self.names.append(key.name)
 			self.paths.append(key.path)
-			self.handles.append(key.hanle)
+			self.handles.append(key.handle)
 			
 		self.tuples = zip(self.handles, self.paths, self.names)
 		return self.tuples
@@ -104,22 +111,20 @@ class RegKey():
 		for entry in self.list_of_entries:
 			entry.printRegEntry()
 				
-	## printRegKey - Takes in a series of booleans to determine what is print. Input will later be a bit-mask.
-	## b_e - Boolean determining if the list of entries is printed.
-	## b_k - Bool determining if the list of subkeys is printed.
+	## printRegKey - Prints the name, handle (address of pyHandle object), parent (full path), # of entries, # of subkeys, the values (names) of each entry and the names of each of the subkeys under this registry key.
 	def printRegKey(self):
 		print "Name: " + self.name
 		print " Handle: " + str(self.handle)
 		print " Parent: " + self.parent
+		print " # of Entries: " + str(len(self.list_of_entries))		
 		print " # of Subkeys: " + str(len(self.list_of_subkeys))
-		print " # of Entries: " + str(len(self.list_of_entries))
 		print "  List of Entries..." 
 		for entry in self.list_of_entries:
 			print "    " + entry.value
 	
 		print "  List of Subkeys..."
 		for key in self.list_of_subkeys:
-			print "    " + key.path
+			print "    " + key.name
 
 		print "END OF KEY!\n"
 			
@@ -162,6 +167,7 @@ class RegEntry():
 	## self.value - Corresponds to the Name column in regedit.
 	## self.type  - Corresponds to the type column in regedit.
 	## self.data  - Corresponds to the data column in regedit.
+	## tuple      - The value, type, data tuple returned by _winreg.EnumValue() funciton.
 	def __init__(self, tuple):
 		self.value = tuple[0]
 		if   (tuple[2] == 2):
@@ -170,10 +176,20 @@ class RegEntry():
 			self.type = "REG_BINARY"
 		else:
 			self.type = "REG_DWORD"
-		self.data  = tuple[1]
-
-	## printEntry - Prints the information of interest.
-	## Meant to be used for debugging purposes only.
+		
+		try:
+			self.data = tuple[1]
+		except UnicodeError:
+			self.data = "BAD DATA"
+	
+	## Returns a summary about the current RegEntry object as a tuple.	
+	## 0 - Contents of value (name) column as viewed in Regedit.
+	## 1 - Contents of type column as viewed in Regedit.
+	## 2 - Contetns of data column as viewed in Regedit.
+	def getRegEntry(self):
+		return self.value, self.type, self.data
+	
+	## printEntry - Prints the value (name), type and data contents of this RegEntry object.
 	def printRegEntry(self):
 		print "   Value: "  + self.value
 		print "    Type: "  + str(self.type)
