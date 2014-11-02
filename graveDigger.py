@@ -4,8 +4,6 @@
 
 import sys, easyReg, _winreg
 
-
-
 # only works on 7
 # returns search queries from the search bar on the start menu
 def wordWheelQuery():
