@@ -1,4 +1,5 @@
 ## easyReg.py
+## Author: Daniel "Albinohat" Mercado
 ## A simple wrapper module for _winreg.
 ## This module provides easy access to registry keys via strings as well objects to store registry keys and entries.
 
@@ -12,6 +13,7 @@
 ## Value/Entry  - A data entry for a given key.
 ## Data         - The contents of a value.
 
+## Standard Imports.
 import sys, time, _winreg
 
 ## RegKey - A class which contains many attributes describing a registry key.
@@ -23,6 +25,8 @@ class RegKey():
 	## self.name            - The name of this registry key.
 	## self.list_of_entries - A list of RegEntry objects containing all information in this Registry Key.
 	## self.list_of_subkeys - A list of RegKey objects containing the subkeys under this registry key.
+	##
+	## path                 - The full path to the registry key this RegKey instance will describe.
 	def __init__(self, path):
 		self.handle          = easyOpenKey(path)
 		self.path            = path		
@@ -91,7 +95,7 @@ class RegKey():
 		## Loop through the entries until you run out.
 		for i in range(1024):
 			try:
-				self.addEntry(RegEntry(_winreg.EnumValue(self.handle, i)))
+				self.addEntry(RegEntry(self.path, _winreg.EnumValue(self.handle, i)))
 				
 			except EnvironmentError:
 				break
@@ -163,12 +167,16 @@ class RegKey():
 			
 ## RegEntry - A class which contains many attributes describing a registry entry.
 class RegEntry():
-	## __init__   - Initialize the attributes of a User object.
-	## self.value - Corresponds to the Name column in regedit.
-	## self.type  - Corresponds to the type column in regedit.
-	## self.data  - Corresponds to the data column in regedit.
-	## tuple      - The value, type, data tuple returned by _winreg.EnumValue() funciton.
-	def __init__(self, tuple):
+	## __init__    - Initialize the attributes of a User object.
+	## self.parent - The path of key that this entry is under.
+	## self.value  - Corresponds to the Name column in regedit.
+	## self.type   - Corresponds to the type column in regedit.
+	## self.data   - Corresponds to the data column in regedit.
+	##
+	## parent      - The path attribute passed in as a string. (Could be from a ReKey object or a stand-alone string).
+	## tuple       - The value, type, data tuple returned by _winreg.EnumValue() funciton.
+	def __init__(self, parent, tuple):
+		self.parent = parent
 		self.value = tuple[0]
 		if   (tuple[2] == 2):
 			self.type = "REG_EXPAND_SZ"
@@ -183,14 +191,16 @@ class RegEntry():
 			self.data = "BAD DATA"
 	
 	## Returns a summary about the current RegEntry object as a tuple.	
-	## 0 - Contents of value (name) column as viewed in Regedit.
-	## 1 - Contents of type column as viewed in Regedit.
-	## 2 - Contetns of data column as viewed in Regedit.
+	## 0 - Contains the path to the parent registry key as a string.
+	## 1 - Contents of value (name) column as viewed in Regedit.
+	## 2 - Contents of type column as viewed in Regedit.
+	## 3 - Contents of data column as viewed in Regedit.
 	def getRegEntry(self):
-		return self.value, self.type, self.data
+		return self.parent, self.value, self.type, self.data
 	
 	## printEntry - Prints the value (name), type and data contents of this RegEntry object.
 	def printRegEntry(self):
+		print "   Parent: " + self.parent
 		print "   Value: "  + self.value
 		print "    Type: "  + str(self.type)
 		try:
@@ -198,7 +208,9 @@ class RegEntry():
 		except UnicodeEncodeError:
 			print "    BAD DATA! \n"
 	
-##End of RegEntry class		
+## End of RegEntry class		
+
+## Start of easyReg classless methods.
 
 ## s - The key provided by the user. (string)
 ## k - The subkey to be created under the key. (string)
@@ -383,5 +395,4 @@ def walkReg(k, n, fn, l):
 	else:
 		return
 		
-## End of helper functions
-## End of easyReg.py
+## End of easyReg classless methods.
