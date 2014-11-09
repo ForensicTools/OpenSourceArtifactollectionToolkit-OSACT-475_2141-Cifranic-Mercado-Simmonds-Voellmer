@@ -1,9 +1,15 @@
-## lastFile.py
+## fileHistory.py
+## Author: Daniel "Albinohat" Mercado
+## This module aims to gather information about recent file history on a Windows machine.
 
-## Imports
+## Standard Imports
+import binascii, os, time, win32security
+
+## Third-party Imports
 from win32com.shell import shell, shellcon
-import binascii, easyReg, os, time, win32security
+import easyReg
 
+## RecentFile - This call contains information about a recently opened or saved file.
 class RecentFile():
 	## __init__   - Initialize the attributes of a registry entry (File).
 	## self.entry - The registry entry associated with this file.
@@ -20,19 +26,20 @@ class RecentFile():
 		else:
 			self.file = "INVALID_FORMAT"
 
-	## printDevice - Prints the information of interest.
+	## printRecentFile - Prints out the attributes of the printRecentFile instance.
 	def printRecentFile(self):
+		print "    RecentFile.printRecentFile()"
 		if (self.file != "INVALID_FORMAT"):
-			print "Value: "   + self.entry.value
-			print "  File: "  + self.file
+			print "        Value: "   + self.entry.value
+			print "        File: "  + self.file
 			self.meta.printMetadata()
 		
-##End of RegEntry class	
+## End of RecentFile class
 
+## Metadata - This class contians information describing a file.
 class Metadata():
 	## __init__   - Initialize the attributes of a File
 	## self.file  - The name of the file passed in form RegEntry.__init__().
-	#  self.dev   - The device on which the file was saved.
 	## self.owner - The owner of the current file. (Tuple)
 	## self.sid   - The Security Identifier (SID) of the owner of the current file.
 	## self.uid   - A list containing the name, domain and type of the owner of the file.
@@ -45,7 +52,6 @@ class Metadata():
 	## f_obj      - The file object passed in from RecentFile.__init__().
 	def __init__(self, file, f_obj):
 		self.file  = file
-		#self.dev   = f_obj.st_dev
 		self.sid = win32security.GetFileSecurity(self.file, win32security.OWNER_SECURITY_INFORMATION).GetSecurityDescriptorOwner()
 		if (self.file != "INVALID_FORMAT"):
 			try:
@@ -58,18 +64,19 @@ class Metadata():
 		self.mtime = f_obj.st_mtime
 		self.atime = f_obj.st_atime
 		self.ctime = f_obj.st_ctime
-
+	
+	## printMetadata - Prints out the attributes of the Metadata instance.
 	def printMetadata(self):
-		#print "    Device: "    + str(self.dev)
-		print     "    SID: " + str(self.sid)[6:]
+		print "    Metadata.printMetadata()"
+		print     "        SID: " + str(self.sid)[6:]
 		if (type(self.owner) is str):
-			print "    Owner: "     + str(self.owner)
+			print "        Owner: "     + str(self.owner)
 		else:
-			print "    Owner: "     + self.owner[1] + "\\" + self.owner[0]
+			print "        Owner: "     + self.owner[1] + "\\" + self.owner[0]
 			
-		print "    File Size: " + str(self.size)
-		print "    Modified: "  + time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(self.mtime))
-		print "    Accessed: "  + time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(self.atime))
-		print "    Created: "   + time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(self.ctime)) + "\n"
+		print "        File Size: " + str(self.size)
+		print "        Modified: "  + time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(self.mtime))
+		print "        Accessed: "  + time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(self.atime))
+		print "        Created: "   + time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(self.ctime)) + "\n"
 		
-##End of Metadata class	
+##End of Metadata class
