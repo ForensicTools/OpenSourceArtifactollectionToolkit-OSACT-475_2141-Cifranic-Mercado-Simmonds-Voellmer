@@ -1,4 +1,5 @@
 ## fileHistoryUnitTest.py
+## Author: Daniel "Albinohat" Mercado
 ## This script returns the most recently opened/saved files using the windows open/save prompts.
 ## CLAs (2)
 ## 1 - REQUIRED - File extension without leading dot ro star for last 20 regardless of extension.
