@@ -3,8 +3,8 @@
 ## A simple wrapper module for _winreg.
 ## This module provides easy access to registry keys via strings as well objects to store registry keys and entries.
 
-## TODO         - Modify walkReg's fn function to take a list as a parameter. [TESTING REQUIRED]
-##              - Modify the sortEntries and sortSubkeys methods to allow sorting on any of the attribute of the RegEntry or RegKey classes.
+## TODO         - Modify walkReg's fn function to take a list as a parameter. [ DONE ]
+##              - Modify the sortEntries and sortSubkeys methods to allow sorting on any of the attribute of the RegEntry or RegKey classes. [ NOT STARTED ]
 
 ## Terminology - To attempt to reduce confusion, here are some definitions of commonly used terms.
 ## Key          - A registry key.
@@ -400,7 +400,6 @@ def walkReg(k, n, fn, l):
 		k.populateSubkeys()
 		
 		## Call the user-defined function passing it the list of parameters.
-		print "    In: " + k.path
 		fn(l)
 		
 		## Recursively go through all of the sub entries until you run out of information of n = 0
