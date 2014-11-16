@@ -3,16 +3,15 @@
 ## A simple wrapper module for _winreg.
 ## This module provides easy access to registry keys via strings as well objects to store registry keys and entries.
 
-## TODO         - Modify walkReg's fn function to take a list as a parameter. [ DONE ]
-##              - Modify the sortEntries and sortSubkeys methods to allow sorting on any of the attribute of the RegEntry or RegKey classes. [ NOT STARTED ]
+## TODO         - Modify walkReg's fn function to take a list as a parameter. [TESTING REQUIRED]
+##				- Write functions to return info rather than print in RegKey + RegEntry. [DONE]
 
-## Terminology - To attempt to reduce confusion, here are some definitions of commonly used terms.
+## Terminology  - To attempt to reduce confusion, here are some definitions of commonly used terms.
 ## Key          - A registry key.
 ## Subkey       - A key that resides directly under a key.
 ## Parent       - The key that resides directly above a key.
 ## Value/Entry  - A data entry for a given key.
-## Type         - The type of the contents of a Value/Entry.
-## Data         - The contents of a Value/Entry.
+## Data         - The contents of a value.
 
 ## Standard Imports.
 import sys, time, _winreg
@@ -106,6 +105,7 @@ class RegKey():
 		## Loop through the subkeys until you run out.
 		for i in range(1024):
 			try:
+				print str(self.path + "\\" + _winreg.EnumKey(self.handle, i))
 				self.addSubkey(RegKey(self.path + "\\" + _winreg.EnumKey(self.handle, i)))
 				
 			except EnvironmentError:
@@ -132,7 +132,7 @@ class RegKey():
 			print "    " + key.name
 
 		print "END OF KEY!\n"
-	
+			
 	## printSubkeys - Calls the printRegKey method to print all subkeys of this registry key.
 	def printSubkeys(self):
 		for key in self.list_of_subkeys:
@@ -163,52 +163,33 @@ class RegKey():
 		
 		if (self.bool_found == 0):
 			print "    easyReg.RegKey.removeSubkey: There was no subkey found with the name \"" + n + ".\""
-	
-	## sortEntries - Sorts the list of entries alphabetically or numerically.
-	## type        - How to sort the list. (alphabetically or numerically)
-	# sort_attr   - The attribute to sort by. (See RegKey and RegEntry documentation for the list of attributes)
-	def sortEntries(self, type):
-		if (type == "alphabetical"):
-			self.list_of_entries.sort(key = lambda entry: entry.value, reverse = False)
-		elif (type == "numerical"):
-			self.list_of_entries.sort(key = lambda entry: int(entry.value), reverse = False)
-		else:
-			print "    easReg.RegKey.sortEntries: Invalid sort type specified."
-			print "    Valid types are \"alphabetical\" and \"numeric.\""
 
-	## sortSubkeys - Sorts the list of subkeys alphabetically or numerically.
-	## type        - How to sort the list. (alphabetically or numerically)
-	# sort_attr   - The attribute to sort by. (See RegKey and RegEntry documentation for the list of attributes)
-	def sortSubkeys(self, type):
-		if (type == "alphabetical"):
-			self.list_of_subkeys.sort(key = lambda key: key.name, reverse = False)
-		elif (type == "numerical"):	
-			self.list_of_subkeys.sort(key = lambda key: int(key.name), reverse = False)
-		else:
-			print "    easReg.RegKey.sortSubkeys: Invalid sort type specified."
-			print "    Valid types are \"alphabetical\" and \"numeric.\""
-	
 ## End of RegKey class
 			
 ## RegEntry - A class which contains many attributes describing a registry entry.
 class RegEntry():
 	## __init__    - Initialize the attributes of a User object.
 	## self.parent - The path of key that this entry is under.
-	## self.value  - Corresponds to the Name column in Regedit.
-	## self.type   - Corresponds to the type column in Regedit.
-	## self.data   - Corresponds to the data column in Regedit.
+	## self.value  - Corresponds to the Name column in regedit.
+	## self.type   - Corresponds to the type column in regedit.
+	## self.data   - Corresponds to the data column in regedit.
 	##
-	## parent      - The path attribute passed in as a string. (Could be from a RegKey object or a stand-alone string).
+	## parent      - The path attribute passed in as a string. (Could be from a ReKey object or a stand-alone string).
 	## tuple       - The value, type, data tuple returned by _winreg.EnumValue() funciton.
 	def __init__(self, parent, tuple):
 		self.parent = parent
 		self.value = tuple[0]
-		if   (tuple[2] == 2):
+		if (tuple[2] == 1):
+			self.type = "REG_SZ"
+		elif (tuple[2] == 2):
 			self.type = "REG_EXPAND_SZ"
 		elif (tuple[2] == 3):
 			self.type = "REG_BINARY"
-		else:
+		elif (tuple[2] == 4):
 			self.type = "REG_DWORD"
+		
+		else:
+			self.type = "INVALID"
 		
 		try:
 			self.data = tuple[1]
@@ -387,27 +368,37 @@ def listValues(s):
 ## walkReg - Walks through the registry starting at a specified key or Hive.
 ## k  - A RegKey object.
 ## n  - The maximum number of levels of subkeys to walk. Will be decremented in each iteration.
-##      A value of -1 means to go until you run out of registry keys.
-## fn - A user-defined function to be run each time walkReg runs. 
-##      It takes a list as a parameter in order to let the user have maximum control over the parameter sent.
+## fn - A user-defined function to be run each time walkReg runs. It takes a list as a parameter in order to let the user have maximum control over the parameter sent.
 ## l  - The list to be passed to function fn.
 def walkReg(k, n, fn, l):
-	if (n != 0):
-		## Populate the entries of k.
-		k.populateEntries()
-		
-		## Populate subkeys of k.
-		k.populateSubkeys()
-		
-		## Call the user-defined function passing it the list of parameters.
-		fn(l)
+	if (n > 0):
+		## Loop through the subkeys until you run out.
+		for i in range(1024):
+			try:
+				current = k.path + "\\" + _winreg.EnumKey(k.handle, i)
+				k.addSubkey(RegKey(current))
+
+			except EnvironmentError:
+				## Sort the list of registry entries.
+				k.list_of_subkeys.sort(key=lambda k: k.name, reverse=False)
+				break
+
+		## Loop through the entries of the current key until you run out.
+		for j in range(1024):
+			try:
+				k.addEntry(RegEntry(_winreg.EnumValue(k.handle, j)))
+
+			except EnvironmentError:
+				## Sort the list of registry entries.
+				k.list_of_entries.sort(key=lambda e: e.value, reverse=False)		
+				break
 		
 		## Recursively go through all of the sub entries until you run out of information of n = 0
-		for key in k.list_of_subkeys:	
-			walkReg(key, (n - 1), fn, l)
-			
-	## n == 0. Stop walking. Return 0 to indicate success.
+		for key in k.list_of_subkeys:
+			## Call the user-defined function.
+			fn(l)
+			walkReg(key, (n - 1), fn)	
 	else:
-		return 0
+		return
 		
 ## End of easyReg classless methods.
