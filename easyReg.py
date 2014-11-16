@@ -105,6 +105,7 @@ class RegKey():
 		## Loop through the subkeys until you run out.
 		for i in range(1024):
 			try:
+				print str(self.path + "\\" + _winreg.EnumKey(self.handle, i))
 				self.addSubkey(RegKey(self.path + "\\" + _winreg.EnumKey(self.handle, i)))
 				
 			except EnvironmentError:
@@ -178,12 +179,17 @@ class RegEntry():
 	def __init__(self, parent, tuple):
 		self.parent = parent
 		self.value = tuple[0]
-		if   (tuple[2] == 2):
+		if (tuple[2] == 1):
+			self.type = "REG_SZ"
+		elif (tuple[2] == 2):
 			self.type = "REG_EXPAND_SZ"
 		elif (tuple[2] == 3):
 			self.type = "REG_BINARY"
-		else:
+		elif (tuple[2] == 4):
 			self.type = "REG_DWORD"
+		
+		else:
+			self.type = "INVALID"
 		
 		try:
 			self.data = tuple[1]
