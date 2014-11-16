@@ -25,8 +25,6 @@ def history(): # Passes a function to create History Shortcut
 #Also tracks access of local system files.	
 	print ("Entered History Function")
 	
-	#get username
-	#name = getpass.getuser()
 	#save the path
 	historyFolder = 'C:\\Users\\' + name + '\\Desktop\\artifacts\\History'
 	
@@ -69,28 +67,63 @@ def cache():
 	CopyFileContents( source, dest )
 	
 	#list file extensions and store in an Array
-	file_list = next(os.walk(r'C:\Users\nick\AppData\Local\Microsoft\Windows\Temporary Internet Files\Low\Content.IE5'))[1]
+	#file_list = next(os.walk(r'C:\Users\nick\AppData\Local\Microsoft\Windows\Temporary Internet Files\Low\Content.IE5'))[1]
 
-	counter = 0
-	directoryStore = []
-	for file_list in file_list:        # Second Example
+	
+	
+	# for file_list in file_list:        # Second Example
+		# print ('Sub Directory : ', counter, file_list ) 
 		
-		# temp = file_list
-		# print (temp)
-		# directoryStore[counter] = file_list
-		# x = List[i][0]
-		# y = List[i][1]
-		
-		
-		print ('Sub Directory : ', counter, file_list ) 
-		counter = counter + 1
 	
 	
 def sessionRestore():
 	print ("Enter Session Restore Function")
 	
+	#save the path
+	sessionFolder = 'C:\\Users\\' + name + '\\Desktop\\artifacts\\Session_Restore'
+	
+	#function to create a new folder - 1 Parameter for a string, location
+	makeDirectory(sessionFolder);
+	
+	#Check if path exists (returns T/F)
+	sessionFolder = os.path.exists(os.path.expandvars("%LOCALAPPDATA%\Microsoft\Windows\History"))
+
+	if sessionFolder:
+		print ("\tYou have access to the Session Restore folder, creating short-cut to the repo")
+		
+		#Now start writng things to the directory
+		sourcePath = 'C:\\Users\\' + name + '\\AppData\\Local\\Microsoft\\Internet Explorer\\Recovery'
+		destPath = 'C:\\Users\\' + name + '\\Desktop\\artifacts\\Session_Restore'
+		CopyFileContents( sourcePath, destPath )
+		
+	else:
+		print ("Unable to Create to the Session folder, please check your user privileges")
+	
+	
+	
 def flash():
 	print ("Enter Flash Function")
+	
+		
+	#save the path
+	flashFolder = 'C:\\Users\\' + name + '\\Desktop\\artifacts\\Flash_Settings'
+	
+	#function to create a new folder - 1 Parameter for a string, location
+	makeDirectory(flashFolder);
+	
+	#Check if path exists (returns T/F)
+	flashFolder = os.path.exists(os.path.expandvars("%LOCALAPPDATA%\Microsoft\Windows\History"))
+
+	if flashFolder:
+		print ("\tYou have access to the Session Restore folder, creating short-cut to the repo")
+		
+		#Now start writng things to the directory
+		sourcePath = 'C:\\Users\\' + name + '\\AppData\\Roaming\\Macromedia\\Flash Player\\macromedia.com\\support\\flashplayer\\sys'
+		destPath = 'C:\\Users\\' + name + '\\Desktop\\artifacts\\Flash_Settings'
+		CopyFileContents( sourcePath, destPath )
+		
+	else:
+		print ("Flash is not installed on this system, therefore, will not check for flash settings")
 
 #Non-Modulated Functions
 def createRepo():
@@ -166,13 +199,13 @@ def CopyFileContents( sourcePath, destPath ):
 				
 def main():
 	createRepo();
-	browserDetection(); 
+	#browserDetection(); 
 	#history();
 	
 	#cookie();
-	cache();
+	#cache();
 	#sessionRestore();
-	#flash(); 
+	flash(); 
 	 
 
 
