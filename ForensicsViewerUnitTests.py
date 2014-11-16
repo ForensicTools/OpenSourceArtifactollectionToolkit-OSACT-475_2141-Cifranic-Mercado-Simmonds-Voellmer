@@ -11,3 +11,5 @@ print getPsLoggedon()
 print getTcpvcon()
 print getDiskext()
 print getSmartctl()
+print getDump()
+
