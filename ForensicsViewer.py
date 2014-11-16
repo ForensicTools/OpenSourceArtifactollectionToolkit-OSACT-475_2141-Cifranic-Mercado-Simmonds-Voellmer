@@ -54,3 +54,15 @@ def getDiskext():
 def getSmartctl():
 	smartctl = subprocess.check_output('.\systeminternals\smart\smartctl --scan')
 	return smartctl
+	
+# MoonSols Windows Memory "DumpIt" 	This utility is used to generate a physical memory dump
+# of Windows machines. It works with both 
+# x86 (32-bits) and x64 (64-bits) machines.
+# The raw memory dump is generated in the current directory, only a confirmation question is prompted before starting.
+# Perfect to deploy the executable on USB keys, for quick incident responses needs.
+# This program will create a dump file that is the same size as your installed RAM. 
+	
+def getDump():
+
+	dump = subprocess.check_output('.\sysinternals\dump\DumpIt')
+	return dump
