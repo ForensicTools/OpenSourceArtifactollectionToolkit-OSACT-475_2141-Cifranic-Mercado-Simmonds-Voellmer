@@ -44,8 +44,8 @@ test_regkey3.populateSubkeys()
 
 print "\n==TEST 3=="
 print "Sorting the list of entries and subkeys of the RegKey objects.\n"
-test_regkey1.sortEntries("alphabetical")
-test_regkey1.sortSubkeys("alphabetical")
+test_regkey1.sortEntries("numeric")
+test_regkey1.sortSubkeys("numeric")
 
 test_regkey2.sortEntries("alphabetical")
 test_regkey2.sortSubkeys("alphabetical")
