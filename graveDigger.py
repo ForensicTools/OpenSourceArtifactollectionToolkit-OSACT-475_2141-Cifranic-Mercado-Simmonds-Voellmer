@@ -24,8 +24,25 @@ def wordWheelQuery():
 
 ## Only works on XP
 ## Returns search terms used in the search assistant
-#def ACMRU():
 
+##in progress
+def ACMRU():
+
+netSearch = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5001")
+docName = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5603")
+wordPhrase = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5604")
+objects = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5647")
+#	print str(localKey)
+#	print str(localKey.handle)
+	for i in range(1024):
+		try:
+			print str(i)
+			print str(_winreg.EnumValue(localKey.handle, i))
+			localKey.list_of_entries.append(easyReg.RegEntry(_winreg.EnumValue(localKey.handle, i)))
+		except EnvironmentError:
+			break
+	for entry in localKey.list_of_entries:
+		entry.printEntry()
 ##
 
 def lastVisitedMRU():
