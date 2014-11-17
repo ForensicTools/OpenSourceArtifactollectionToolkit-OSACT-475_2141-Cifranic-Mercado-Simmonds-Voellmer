@@ -22,21 +22,28 @@ class RecentFile():
 		## Verify the integrity of the PIDL which should be 20 bytes long.
 		if (int(binascii.hexlify(self.entry.data[0:1]), 16) == 20):
 			self.file = shell.SHGetPathFromIDList(shell.StringAsPIDL(self.entry.data))
-			self.meta = Metadata(self.file, os.stat(self.file))
+			try:
+				self.meta = Metadata(self.file, os.stat(self.file))
+		
+			except WindowsError:
+				self.meta = "File deleted. No metadata available."
 		else:
 			self.file = "INVALID_FORMAT"
 
 	## printRecentFile - Prints out the attributes of the printRecentFile instance.
 	def printRecentFile(self):
-		print "    RecentFile.printRecentFile()"
 		if (self.file != "INVALID_FORMAT"):
+			print "    RecentFile.printRecentFile()"
 			print "        Value: "   + self.entry.value
 			print "        File: "  + self.file
-			self.meta.printMetadata()
+			if (isinstance(self.meta, Metadata)):
+				self.meta.printMetadata()
+			elif (type(self.meta) is str):
+				print "        " + self.meta
 		
 ## End of RecentFile class
 
-## Metadata - This class contians information describing a file.
+## Metadata - This class contains information describing a file.
 class Metadata():
 	## __init__   - Initialize the attributes of a File
 	## self.file  - The name of the file passed in form RegEntry.__init__().
