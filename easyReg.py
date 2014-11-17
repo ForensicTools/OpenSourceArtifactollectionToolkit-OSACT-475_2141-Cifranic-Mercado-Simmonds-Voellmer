@@ -277,7 +277,7 @@ def easyGetValue(s, i):
 def easyOpenKey(s):
 	## Create a list containing the hive and the name of the Registry key.
 	t_k = s.split("\\", 1)
-
+	
 	## Set the required hive to one of the predefined CONSTs.
 	if   (t_k[0] == "HKEY_CLASSES_ROOT"):
 		return _winreg.OpenKey(_winreg.ConnectRegistry(None, _winreg.HKEY_CLASSES_ROOT), t_k[1])
