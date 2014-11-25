@@ -105,7 +105,6 @@ class RegKey():
 		## Loop through the subkeys until you run out.
 		for i in range(1024):
 			try:
-				print str(self.path + "\\" + _winreg.EnumKey(self.handle, i))
 				self.addSubkey(RegKey(self.path + "\\" + _winreg.EnumKey(self.handle, i)))
 				
 			except EnvironmentError:
