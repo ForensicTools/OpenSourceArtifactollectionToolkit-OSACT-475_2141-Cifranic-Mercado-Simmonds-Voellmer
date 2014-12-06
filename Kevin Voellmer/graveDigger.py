@@ -5,22 +5,15 @@
 import sys, easyReg, _winreg
 
 
-
 ## Only works on Windows 7
 ## Returns search queries from the search bar on the start menu
 def wordWheelQuery():
 	localKey = easyReg.RegKey("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery")
-	print str(localKey)
-	print str(localKey.handle)
-	for i in range(1024):
-		try:
-			print str(i)
-			print str(_winreg.EnumValue(localKey.handle, i))
-			localKey.list_of_entries.append(easyReg.RegEntry(_winreg.EnumValue(localKey.handle, i)))
-		except EnvironmentError:
-			break
+	print "Recent Search Terms"
+	localKey.populateEntries()
 	for entry in localKey.list_of_entries:
-		entry.printEntry()
+		if entry.getRegEntry()[1] != "MRUListEx":
+			print entry.getRegEntry()[3]
 	
 #wordWheelQuery()
 
@@ -30,12 +23,12 @@ def wordWheelQuery():
 ##in progress
 def ACMRU():
 
-netSearch = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5001")
-docName = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5603")
-wordPhrase = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5604")
-objects = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5647")
-#	print str(localKey)
-#	print str(localKey.handle)
+	netSearch = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5001")
+	docName = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5603")
+	wordPhrase = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5604")
+	objects = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5647")
+	print str(localKey)
+	print str(localKey.handle)
 	for i in range(1024):
 		try:
 			print str(i)
@@ -49,18 +42,21 @@ objects = easyReg.RegKey("NTUSER.DAT\Software\Microsoft\Search Assistant\ACMru\5
 
 def lastVisitedMRU():
 	localKey = easyReg.RegKey("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedPidlMRU")
-	print str(localKey)
-	print str(localKey.handle)
-	for i in range(1024):
-		try:
-			print str(i)
-			print str(_winreg.EnumValue(localKey.handle, i))
-			localKey.list_of_entries.append(easyReg.RegEntry(_winreg.EnumValue(localKey.handle, i)))
-		except EnvironmentError:
-			break
+	print "Recently Opened Files and Associated Programs"
+	localKey.populateEntries()
 	for entry in localKey.list_of_entries:
-		entry.printEntry()
+		if entry.getRegEntry()[1] != "MRUListEx":
+			print entry.getRegEntry()[3]
 	
+	
+	
+def runMRU():
+	localKey = easyReg.RegKey("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU")
+	print "Recent Run Commands"
+	localKey.populateEntries()
+	for entry in localKey.list_of_entries:
+		if entry.getRegEntry()[1] != "MRUListEx":
+			print entry.getRegEntry()[3]
 	
 #lastVisitedMRU()
 
@@ -88,3 +84,11 @@ def lastVisitedMRU():
 #def index():
 
 ##
+
+wordWheelQuery()
+print ""
+print ""
+lastVisitedMRU()
+print ""
+print ""
+runMRU()
