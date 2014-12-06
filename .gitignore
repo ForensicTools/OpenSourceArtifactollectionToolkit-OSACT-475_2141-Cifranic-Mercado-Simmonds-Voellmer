@@ -1,7 +1,7 @@
 # File extensions
-*.txt
-*.pyc
-*.log
+**/*.txt
+**/*.pyc
+**/*.log
 
 # Folders
 
