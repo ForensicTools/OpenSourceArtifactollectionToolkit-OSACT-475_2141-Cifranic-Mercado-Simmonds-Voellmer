@@ -74,8 +74,6 @@ def cache():
 	# for file_list in file_list:        # Second Example
 		# print ('Sub Directory : ', counter, file_list ) 
 		
-	
-	
 def sessionRestore():
 	print ("Enter Session Restore Function")
 	
@@ -98,7 +96,6 @@ def sessionRestore():
 		
 	else:
 		print ("Unable to Create to the Session folder, please check your user privileges")
-	
 	
 	
 def flash():
@@ -199,12 +196,12 @@ def CopyFileContents( sourcePath, destPath ):
 				
 def main():
 	createRepo();
-	#browserDetection(); 
-	#history();
+	browserDetection(); 
+	history();
 	
-	#cookie();
-	#cache();
-	#sessionRestore();
+	cookie();
+	cache();
+	sessionRestore();
 	flash(); 
 	 
 
