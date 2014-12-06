@@ -46,7 +46,7 @@ def ACMRU():
 ##Outputs programs which have recently opened or saved files
 def lastVisitedMRU():
 	localKey = easyReg.RegKey("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedPidlMRU")
-	text_file.write("Recently Opened Files and Associated Programs\n")
+	text_file.write("Programs Which Recently Opened or Saved Files\n")
 	localKey.populateEntries()
 	for entry in localKey.list_of_entries:
 		if entry.getRegEntry()[1] != "MRUListEx":
