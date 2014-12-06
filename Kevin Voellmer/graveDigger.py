@@ -4,16 +4,19 @@
 
 import sys, easyReg, _winreg
 
+##Open text file for writing output
+text_file = open("Output.txt", "w+")
 
 ## Only works on Windows 7
 ## Returns search queries from the search bar on the start menu
 def wordWheelQuery():
 	localKey = easyReg.RegKey("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery")
-	print "Recent Search Terms"
+	text_file.write("Recent Search Terms\n")
 	localKey.populateEntries()
 	for entry in localKey.list_of_entries:
 		if entry.getRegEntry()[1] != "MRUListEx":
-			print entry.getRegEntry()[3]
+			text_file.write(entry.getRegEntry()[3])
+			text_file.write("\n")
 	
 #wordWheelQuery()
 
@@ -38,25 +41,29 @@ def ACMRU():
 			break
 	for entry in localKey.list_of_entries:
 		entry.printEntry()
-##
-
+		
+		
+##Outputs programs which have recently opened or saved files
 def lastVisitedMRU():
 	localKey = easyReg.RegKey("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedPidlMRU")
-	print "Recently Opened Files and Associated Programs"
+	text_file.write("Recently Opened Files and Associated Programs\n")
 	localKey.populateEntries()
 	for entry in localKey.list_of_entries:
 		if entry.getRegEntry()[1] != "MRUListEx":
-			print entry.getRegEntry()[3]
+			text_file.write(entry.getRegEntry()[3])
+			text_file.write("\n")
 	
 	
 	
+##Outputs recently run commands from the "run" dialog
 def runMRU():
 	localKey = easyReg.RegKey("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU")
-	print "Recent Run Commands"
+	text_file.write("Recent Run Commands\n")
 	localKey.populateEntries()
 	for entry in localKey.list_of_entries:
-		if entry.getRegEntry()[1] != "MRUListEx":
-			print entry.getRegEntry()[3]
+		if entry.getRegEntry()[1] != "MRUList":
+			text_file.write(entry.getRegEntry()[3])
+			text_file.write("\n")
 	
 #lastVisitedMRU()
 
@@ -85,10 +92,16 @@ def runMRU():
 
 ##
 
+##run wordWheelQuery
 wordWheelQuery()
-print ""
-print ""
+text_file.write("\n\n")
+
+##run lastVisitedMRU
 lastVisitedMRU()
-print ""
-print ""
+text_file.write("\n\n")
+
+##run runMRU
 runMRU()
+
+##close output text file
+text_file.close()
