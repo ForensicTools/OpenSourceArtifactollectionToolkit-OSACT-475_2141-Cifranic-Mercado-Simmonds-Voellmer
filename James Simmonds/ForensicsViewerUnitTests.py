@@ -4,12 +4,17 @@
 
 import ForensicsViewer
 
-print ForensicsViewer.getIpconfig()
-print ForensicsViewer.getWhoami()
-print ForensicsViewer.getPslist()
-print ForensicsViewer.getPsLoggedon()
-print ForensicsViewer.getTcpvcon()
-print ForensicsViewer.getDiskext()
-print ForensicsViewer.getSmartctl()
+otp = open('output.log', 'w+')
+
+otp.write(ForensicsViewer.getIpconfig())
+otp.write(ForensicsViewer.getWhoami())
+otp.write(ForensicsViewer.getPslist())
+otp.write(ForensicsViewer.getPsLoggedon())
+otp.write(ForensicsViewer.getTcpvcon())
+otp.write(ForensicsViewer.getDiskext())
+otp.write(ForensicsViewer.getSmartctl())
+
+otp.flush()
+otp.close()
 #print ForensicsViewer.getDump()
 
