@@ -5,9 +5,9 @@
 
 # Folders
 
-systeminternals/
+#systeminternals/
 
 # Dependencies
-easyReg.*
+#easyReg.*
 
 # End of .gitignore. And now I won't forge the pesky newline.
