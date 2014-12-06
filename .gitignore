@@ -1,3 +1,13 @@
+# File extensions
 *.txt
 *.pyc
 *.log
+
+# Folders
+
+systeminternals/
+
+# Dependencies
+easyReg.*
+
+# End of .gitignore. And now I won't forge the pesky newline.
