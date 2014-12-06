@@ -1,7 +1,10 @@
 ## easyReg.py
+## Author: Daniel "Albinohat" Mercado
 ## A simple wrapper module for _winreg.
+## This module provides easy access to registry keys via strings as well objects to store registry keys and entries.
 
-## TODO         - Write functions to return info rather than print in RegKey + RegEntry. [IN-PROGRESS] 
+## TODO         - Modify walkReg's fn function to take a list as a parameter. [TESTING REQUIRED]
+##				- Write functions to return info rather than print in RegKey + RegEntry. [DONE]
 
 ## Terminology  - To attempt to reduce confusion, here are some definitions of commonly used terms.
 ## Key          - A registry key.
@@ -10,6 +13,7 @@
 ## Value/Entry  - A data entry for a given key.
 ## Data         - The contents of a value.
 
+## Standard Imports.
 import sys, time, _winreg
 
 ## RegKey - A class which contains many attributes describing a registry key.
@@ -21,6 +25,8 @@ class RegKey():
 	## self.name            - The name of this registry key.
 	## self.list_of_entries - A list of RegEntry objects containing all information in this Registry Key.
 	## self.list_of_subkeys - A list of RegKey objects containing the subkeys under this registry key.
+	##
+	## path                 - The full path to the registry key this RegKey instance will describe.
 	def __init__(self, path):
 		self.handle          = easyOpenKey(path)
 		self.path            = path		
@@ -33,48 +39,58 @@ class RegKey():
 		self.list_of_entries = []
 
 	## addEntry - Add a registry entry under the this key.
+	## entry    - A RegEntry object to add to the list of entries.
 	def addEntry(self, entry):
 		self.list_of_entries.append(entry)
 
 	## addSubkey - Add a registry key under the this key.
+	## key       - A RegKey object to add to the list of subkeys. 
 	def addSubkey(self, key):
 		self.list_of_subkeys.append(key)
 	
 	## getEntries - Returns a list of tuples containing the value, type and data of each entry.
 	def getEntries(self):
 		self.tuples = []
-		self.values = []
-		self.types  = []
-		self.datas  = []
 		
-		for entry in list_of_entries:
-			self.values.append(entry.value)
-			self.types.append(entry.type)
-			self.datas.append(entry.data)
-		
-		self.tuples = zip(self.values, self.types, self.datas)
+		for entry in self.list_of_entries:
+			self.tuples.append(entry.getRegEntry())
+
 		return self.tuples
 		
 	## Returns a summary about the current RegKey object as a tuple.
-	## 0 - Handle of the RegKey
-	## 1 - Path of the RegKey
-	## 2 - Name of the RegKey
-	## 3 - Parent of this RegKey
-	## 4 - # of entries in the RegKey
-	## 5 - # of subkeys under this entry
+	## 0 - Handle of the RegKey object
+	## 1 - Path of the RegKey object
+	## 2 - Name of the RegKey object
+	## 3 - Parent of this RegKey object
+	## 4 - # of entries in the RegKey object
+	## 5 - # of subkeys under this RegKey object
+	## 6 - A list containing the names of the entries of this RegKey object.
+	## 7 - A list containing the names of the subkeys of this RegKey object.
 	def getRegKey(self):
-		return self.handle, self.path, self.name, self.parent, len(self.list_of_entries), len(self.list_of_subkeys)
+		self.entry_names  = []
+		self.subkey_names = []
+		
+		for entry in self.list_of_entries:
+			self.entry_names.append(entry.value)
+			
+		for key in self.list_of_subkeys:
+			self.subkey_names.append(key.name)
+		
+		return self.handle, self.path, self.name, self.parent, len(self.list_of_entries), len(self.list_of_subkeys), self.entry_names, self.subkey_names
 	
-	##  getSubkeys - Returns a tuples containing the names, paths and handles of each subkey.
+	## getSubkeys - Returns a tuples containing the . paths and names of each subkey of this RegKey object.
+	## 0          - A list of the handles (Addresses of PyHKEY objects) to each subkey.
+	## 1          - A list of the paths of each subkey.
+	## 2          - A list of the names of each subkey.
 	def getSubkeys(self):
 		self.handles = []
 		self.paths   = []
 		self.names   = []
 		
-		for key in list_of_subkeys:
+		for key in self.list_of_subkeys:
 			self.names.append(key.name)
 			self.paths.append(key.path)
-			self.handles.append(key.hanle)
+			self.handles.append(key.handle)
 			
 		self.tuples = zip(self.handles, self.paths, self.names)
 		return self.tuples
@@ -84,7 +100,7 @@ class RegKey():
 		## Loop through the entries until you run out.
 		for i in range(1024):
 			try:
-				self.addEntry(RegEntry(_winreg.EnumValue(self.handle, i)))
+				self.addEntry(RegEntry(self.path, _winreg.EnumValue(self.handle, i)))
 				
 			except EnvironmentError:
 				break
@@ -99,27 +115,25 @@ class RegKey():
 			except EnvironmentError:
 				break		
 
-	## printEntries - Calls the printRegEntry method to print all entries of this registry key.
+	## printEntries - Calls the RegEntry.printRegEntry method to print all entries of this registry key.
 	def printEntries(self):
 		for entry in self.list_of_entries:
 			entry.printRegEntry()
 				
-	## printRegKey - Takes in a series of booleans to determine what is print. Input will later be a bit-mask.
-	## b_e - Boolean determining if the list of entries is printed.
-	## b_k - Bool determining if the list of subkeys is printed.
+	## printRegKey - Prints the name, handle (address of pyHandle object), parent (full path), # of entries, # of subkeys, the values (names) of each entry and the names of each of the subkeys under this registry key.
 	def printRegKey(self):
 		print "Name: " + self.name
 		print " Handle: " + str(self.handle)
 		print " Parent: " + self.parent
+		print " # of Entries: " + str(len(self.list_of_entries))		
 		print " # of Subkeys: " + str(len(self.list_of_subkeys))
-		print " # of Entries: " + str(len(self.list_of_entries))
 		print "  List of Entries..." 
 		for entry in self.list_of_entries:
 			print "    " + entry.value
 	
 		print "  List of Subkeys..."
 		for key in self.list_of_subkeys:
-			print "    " + key.path
+			print "    " + key.name
 
 		print "END OF KEY!\n"
 			
@@ -154,27 +168,74 @@ class RegKey():
 		if (self.bool_found == 0):
 			print "    easyReg.RegKey.removeSubkey: There was no subkey found with the name \"" + n + ".\""
 
+	
+	## sortEntries - Sorts the list of entries alphabetically or numerically.
+	## type        - How to sort the list. (alphabetically or numerically)
+	# sort_attr    - The attribute to sort by. (See RegKey and RegEntry documentation for the list of attributes)
+	def sortEntries(self, type):
+		if (type == "alphabetical"):
+			self.list_of_entries.sort(key = lambda entry: entry.value, reverse = False)
+		elif (type == "numerical"):
+			self.list_of_entries.sort(key = lambda entry: int(entry.value), reverse = False)
+		else:
+			print "    easReg.RegKey.sortEntries: Invalid sort type specified."
+			print "    Valid types are \"alphabetical\" and \"numeric.\""
+ 
+	## sortSubkeys - Sorts the list of subkeys alphabetically or numerically.
+	## type        - How to sort the list. (alphabetically or numerically)
+	# sort_attr   - The attribute to sort by. (See RegKey and RegEntry documentation for the list of attributes)
+	def sortSubkeys(self, type):
+		if (type == "alphabetical"):
+			self.list_of_subkeys.sort(key = lambda key: key.name, reverse = False)
+		elif (type == "numerical"):	
+			self.list_of_subkeys.sort(key = lambda key: int(key.name), reverse = False)
+		else:
+			print "    easReg.RegKey.sortSubkeys: Invalid sort type specified."
+			print "    Valid types are \"alphabetical\" and \"numeric.\""
+						
 ## End of RegKey class
 			
 ## RegEntry - A class which contains many attributes describing a registry entry.
 class RegEntry():
-	## __init__   - Initialize the attributes of a User object.
-	## self.value - Corresponds to the Name column in regedit.
-	## self.type  - Corresponds to the type column in regedit.
-	## self.data  - Corresponds to the data column in regedit.
-	def __init__(self, tuple):
+	## __init__    - Initialize the attributes of a User object.
+	## self.parent - The path of key that this entry is under.
+	## self.value  - Corresponds to the Name column in regedit.
+	## self.type   - Corresponds to the type column in regedit.
+	## self.data   - Corresponds to the data column in regedit.
+	##
+	## parent      - The path attribute passed in as a string. (Could be from a ReKey object or a stand-alone string).
+	## tuple       - The value, type, data tuple returned by _winreg.EnumValue() funciton.
+	def __init__(self, parent, tuple):
+		self.parent = parent
 		self.value = tuple[0]
-		if   (tuple[2] == 2):
+		if (tuple[2] == 1):
+			self.type = "REG_SZ"
+		elif (tuple[2] == 2):
 			self.type = "REG_EXPAND_SZ"
 		elif (tuple[2] == 3):
 			self.type = "REG_BINARY"
-		else:
+		elif (tuple[2] == 4):
 			self.type = "REG_DWORD"
-		self.data  = tuple[1]
-
-	## printEntry - Prints the information of interest.
-	## Meant to be used for debugging purposes only.
+		
+		else:
+			self.type = "INVALID"
+		
+		try:
+			self.data = tuple[1]
+		except UnicodeError:
+			self.data = "BAD DATA"
+	
+	## Returns a summary about the current RegEntry object as a tuple.	
+	## 0 - Contains the path to the parent registry key as a string.
+	## 1 - Contents of value (name) column as viewed in Regedit.
+	## 2 - Contents of type column as viewed in Regedit.
+	## 3 - Contents of data column as viewed in Regedit.
+	def getRegEntry(self):
+		return self.parent, self.value, self.type, self.data
+	
+	## printEntry - Prints the value (name), type and data contents of this RegEntry object.
 	def printRegEntry(self):
+		print "   Parent: " + self.parent
 		print "   Value: "  + self.value
 		print "    Type: "  + str(self.type)
 		try:
@@ -182,22 +243,25 @@ class RegEntry():
 		except UnicodeEncodeError:
 			print "    BAD DATA! \n"
 	
-##End of RegEntry class		
+## End of RegEntry class		
 
-## s - The key provided by the user. (string)
-## k - The subkey to be created under the key. (string)
+## Start of easyReg classless methods.
+
+## easyCreateKey - Creates a subkey under the registry key specified.
+## s             - The key provided by the user. (string)
+## k             - The subkey to be created under the key. (string)
 def easyCreateKey(s, k):
 	_winreg.CreateKey(easyOpenKey(s), k)
 
 ## easyDelete Key - Deletes the specified key.
-## s - The key provided by the user. (string)
+## s              - The key provided by the user. (string)
 def easyDeleteKey(s):
 	_winreg.DeleteKey(easyOpenKey(s))
 
 ## easyDeleteValue - Deletes the specified value.
-## Limitation - Keys with subkeys cannot be deleted.
-## s - The key provided by the user. (string)
-## v - The name of the value to be deleted. (string)
+## Limitation      - Keys with subkeys cannot be deleted.
+## s               - The key provided by the user. (string)
+## v               - The name of the value to be deleted. (string)
 def easyDeleteValue(s, v):
 	_winreg.DeleteValue(easyOpenKey(s), v)
 	
@@ -218,7 +282,7 @@ def easyGetValue(s, i):
 def easyOpenKey(s):
 	## Create a list containing the hive and the name of the Registry key.
 	t_k = s.split("\\", 1)
-
+	
 	## Set the required hive to one of the predefined CONSTs.
 	if   (t_k[0] == "HKEY_CLASSES_ROOT"):
 		return _winreg.OpenKey(_winreg.ConnectRegistry(None, _winreg.HKEY_CLASSES_ROOT), t_k[1])
@@ -337,35 +401,22 @@ def listValues(s):
 ## fn - A user-defined function to be run each time walkReg runs. It takes a list as a parameter in order to let the user have maximum control over the parameter sent.
 ## l  - The list to be passed to function fn.
 def walkReg(k, n, fn, l):
-	if (n > 0):
-		## Loop through the subkeys until you run out.
-		for i in range(1024):
-			try:
-				current = k.path + "\\" + _winreg.EnumKey(k.handle, i)
-				k.addSubkey(RegKey(current))
-
-			except EnvironmentError:
-				## Sort the list of registry entries.
-				k.list_of_subkeys.sort(key=lambda k: k.name, reverse=False)
-				break
-
-		## Loop through the entries of the current key until you run out.
-		for j in range(1024):
-			try:
-				k.addEntry(RegEntry(_winreg.EnumValue(k.handle, j)))
-
-			except EnvironmentError:
-				## Sort the list of registry entries.
-				k.list_of_entries.sort(key=lambda e: e.value, reverse=False)		
-				break
+	if (n != 0):
+		## Populate the entries of k.
+		k.populateEntries()
 		
-		## Recursively go through all of the sub entries until you run out of information of n = 0
-		for key in k.list_of_subkeys:
-			## Call the user-defined function.
-			fn(l)
-			walkReg(key, (n - 1), fn)	
-	else:
-		return
+		## Populate subkeys of k.
+		k.populateSubkeys()
 		
-## End of helper functions
-## End of easyReg.py
+		## Call the user-defined function passing it the list of parameters.
+		fn(l)
+ 		
+ 		## Recursively go through all of the sub entries until you run out of information of n = 0
+		for key in k.list_of_subkeys:	
+			walkReg(key, (n - 1), fn, l)
+			
+	## n == 0. Stop walking. Return 0 to indicate success.
+ 	else:
+		return 0
+		
+## End of easyReg classless methods.
