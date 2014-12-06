@@ -39,10 +39,12 @@ class RegKey():
 		self.list_of_entries = []
 
 	## addEntry - Add a registry entry under the this key.
+	## entry    - A RegEntry object to add to the list of entries.
 	def addEntry(self, entry):
 		self.list_of_entries.append(entry)
 
 	## addSubkey - Add a registry key under the this key.
+	## key       - A RegKey object to add to the list of subkeys. 
 	def addSubkey(self, key):
 		self.list_of_subkeys.append(key)
 	
@@ -76,7 +78,10 @@ class RegKey():
 		
 		return self.handle, self.path, self.name, self.parent, len(self.list_of_entries), len(self.list_of_subkeys), self.entry_names, self.subkey_names
 	
-	##  getSubkeys - Returns a tuples containing the handles (Addresses of PyHKEY objects). paths and names of each subkey of this RegKey object.
+	## getSubkeys - Returns a tuples containing the . paths and names of each subkey of this RegKey object.
+	## 0          - A list of the handles (Addresses of PyHKEY objects) to each subkey.
+	## 1          - A list of the paths of each subkey.
+	## 2          - A list of the names of each subkey.
 	def getSubkeys(self):
 		self.handles = []
 		self.paths   = []
@@ -110,7 +115,7 @@ class RegKey():
 			except EnvironmentError:
 				break		
 
-	## printEntries - Calls the printRegEntry method to print all entries of this registry key.
+	## printEntries - Calls the RegEntry.printRegEntry method to print all entries of this registry key.
 	def printEntries(self):
 		for entry in self.list_of_entries:
 			entry.printRegEntry()
@@ -166,7 +171,7 @@ class RegKey():
 	
 	## sortEntries - Sorts the list of entries alphabetically or numerically.
 	## type        - How to sort the list. (alphabetically or numerically)
-	# sort_attr   - The attribute to sort by. (See RegKey and RegEntry documentation for the list of attributes)
+	# sort_attr    - The attribute to sort by. (See RegKey and RegEntry documentation for the list of attributes)
 	def sortEntries(self, type):
 		if (type == "alphabetical"):
 			self.list_of_entries.sort(key = lambda entry: entry.value, reverse = False)
@@ -242,20 +247,21 @@ class RegEntry():
 
 ## Start of easyReg classless methods.
 
-## s - The key provided by the user. (string)
-## k - The subkey to be created under the key. (string)
+## easyCreateKey - Creates a subkey under the registry key specified.
+## s             - The key provided by the user. (string)
+## k             - The subkey to be created under the key. (string)
 def easyCreateKey(s, k):
 	_winreg.CreateKey(easyOpenKey(s), k)
 
 ## easyDelete Key - Deletes the specified key.
-## s - The key provided by the user. (string)
+## s              - The key provided by the user. (string)
 def easyDeleteKey(s):
 	_winreg.DeleteKey(easyOpenKey(s))
 
 ## easyDeleteValue - Deletes the specified value.
-## Limitation - Keys with subkeys cannot be deleted.
-## s - The key provided by the user. (string)
-## v - The name of the value to be deleted. (string)
+## Limitation      - Keys with subkeys cannot be deleted.
+## s               - The key provided by the user. (string)
+## v               - The name of the value to be deleted. (string)
 def easyDeleteValue(s, v):
 	_winreg.DeleteValue(easyOpenKey(s), v)
 	
@@ -403,7 +409,6 @@ def walkReg(k, n, fn, l):
 		k.populateSubkeys()
 		
 		## Call the user-defined function passing it the list of parameters.
-		print "    In: " + k.path
 		fn(l)
  		
  		## Recursively go through all of the sub entries until you run out of information of n = 0
