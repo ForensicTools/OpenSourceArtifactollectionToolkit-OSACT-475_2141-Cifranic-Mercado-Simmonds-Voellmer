@@ -28,6 +28,6 @@ class osactDemoThread(threading.Thread):
 		elif (self.test_name == "gravedigger"):
 			subprocess.call("python ./graveDigger.py")
 		elif (self.test_name == "forensicsviewer"):
-			subprocess.call("python ./ForensicsViewerUnitTests.py")
+			subprocess.call("python ./forensicsViewerUnitTests.py")
 		else:
 			sys.exit()
