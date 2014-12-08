@@ -1,12 +1,9 @@
-## osactDemo_threading.py
+﻿## osactDemo_threading.py
 ## Author(s): Nick Cifranic & Daniel "Albinohat" Mercado
 ## This module contains the special thread subclasses used by the OSACT multithreaded demo.
 
 ## Standard Imports
-import subprocess, threading
-
-## Third-part Imports
-import osactDemo_main
+import subprocess, sys, threading
 
 ## ExecuteCommandThread - A thread which parses through and executes a command.
 class osactDemoThread(threading.Thread):
@@ -23,15 +20,14 @@ class osactDemoThread(threading.Thread):
 	## run - This method calls the executeCommand method of the specified feature set.
 	def run(self):
 		if (self.test_name == "carmensandiego"):
-			subprocess.call("./carmenSandiegoUnitTests.py")
+			subprocess.call("python ./carmenSandiegoUnitTests.py")
 		elif (self.test_name == "filehistory"):
-			subprocess.call("./fileHistoryUnitTests.py")
+			subprocess.call("python ./fileHistoryUnitTests.py")
 		elif (self.test_name == "ielumberjack"):
-			subprocess.call("./ieLumberJackUnitTests.py")
-		elif (self.test_name == "graveigger"):
-			subprocess.call("./graveDigger.py")
+			subprocess.call("python ./ieLumberJackUnitTests.py")
+		elif (self.test_name == "gravedigger"):
+			subprocess.call("python ./graveDigger.py")
 		elif (self.test_name == "forensicsviewer"):
-			subprocess.call("./ForensicsViewerUnitTests.py")
-			subprocess.call()
+			subprocess.call("python ./ForensicsViewerUnitTests.py")
 		else:
 			sys.exit()

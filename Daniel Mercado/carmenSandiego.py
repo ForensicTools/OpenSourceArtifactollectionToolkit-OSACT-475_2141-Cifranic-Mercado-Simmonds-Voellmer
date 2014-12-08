@@ -1,4 +1,4 @@
-## carmenSandiego.py
+﻿## carmenSandiego.py
 ## Author: Daniel "Albinohat" Mercado
 ## This module is meant to assist in figuring out the physical locations that a Windows machine has been.
 
