@@ -22,7 +22,7 @@ class osactDemoThread(threading.Thread):
 		if (self.test_name == "carmensandiego"):
 			subprocess.call("python ./carmenSandiegoUnitTests.py")
 		elif (self.test_name == "filehistory"):
-			subprocess.call("python ./fileHistoryUnitTests.py")
+			subprocess.call("python ./fileHistoryUnitTests.py *")
 		elif (self.test_name == "ielumberjack"):
 			subprocess.call("python ./ieLumberJackUnitTests.py")
 		elif (self.test_name == "gravedigger"):

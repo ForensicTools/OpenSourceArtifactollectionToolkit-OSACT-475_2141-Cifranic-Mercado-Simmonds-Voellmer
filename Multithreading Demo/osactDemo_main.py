@@ -9,10 +9,10 @@ import sys, threading
 import osactDemo_threading
 
 osactDemo_threading.osactDemoThread("carmensandiego").join()
-#osactDemo_threading.osactDemoThread("filehistory").join()
-#osactDemo_threading.osactDemoThread("ielumberjack").join()
-#osactDemo_threading.osactDemoThread("gravedigger").join()
-#osactDemo_threading.osactDemoThread("forensicsviewer").join()
+osactDemo_threading.osactDemoThread("filehistory").join()
+osactDemo_threading.osactDemoThread("ielumberjack").join()
+osactDemo_threading.osactDemoThread("gravedigger").join()
+osactDemo_threading.osactDemoThread("forensicsviewer").join()
 
 print "\nWaiting on the following threads to return...\n"
 
