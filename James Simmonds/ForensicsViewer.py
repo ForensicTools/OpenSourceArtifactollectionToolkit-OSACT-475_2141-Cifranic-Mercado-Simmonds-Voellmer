@@ -19,13 +19,13 @@ def getWhoami():
 # This function returns the output of PSlist. 
 	
 def getPslist():
-	pslist = subprocess.check_output('.\systeminternals\pslist')
+	pslist = subprocess.check_output('pslist')
 	return pslist
 	
 # This function returns the output of PsLoggedon	
 
 def getPsLoggedon():
-	PsLoggedon = subprocess.check_output('.\systeminternals\PsLoggedon')
+	PsLoggedon = subprocess.check_output('PsLoggedon')
 	return PsLoggedon
 
 # This function returns the output of TCPcon.
@@ -34,7 +34,7 @@ def getPsLoggedon():
 # and state of TCP connections. 
 
 def getTcpvcon():
-	Tcpvcon = subprocess.check_output('.\systeminternals\Tcpvcon')
+	Tcpvcon = subprocess.check_output('Tcpvcon')
 	return Tcpvcon
 
 # This function returns the output of diskext. Diskext command that returns information 
@@ -42,7 +42,7 @@ def getTcpvcon():
 # multiple disks) and where on the disk the partitions are located.	
 
 def getDiskext():
-	diskext = subprocess.check_output('.\systeminternals\diskext')
+	diskext = subprocess.check_output('diskext')
 	return diskext
 
 # S.M.A.R.T. Tools for Command Line
@@ -52,7 +52,7 @@ def getDiskext():
 # Usually a single hard drive will be “/dev/sda”.
 
 def getSmartctl():
-	smartctl = subprocess.check_output('.\systeminternals\smart\smartctl --scan')
+	smartctl = subprocess.check_output('smartctl --scan')
 	return smartctl
 	
 # MoonSols Windows Memory "DumpIt" 	This utility is used to generate a physical memory dump
@@ -63,6 +63,5 @@ def getSmartctl():
 # This program will create a dump file that is the same size as your installed RAM. 
 	
 def getDump():
-
-	dump = subprocess.check_output('.\sysinternals\dump\DumpIt')
+	dump = subprocess.check_output('DumpIt')
 	return dump

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 import os.path # Required to validate files
 import getpass #used to get user
 
@@ -61,21 +61,15 @@ def cache():
 	print ("Enter Cache Function")
 	
 	#Retrieve the temporary internet files 
-	source = r'C:\Users\nick\AppData\Local\Microsoft\Windows\Temporary Internet Files\Low\Content.IE5'
+	source = r'C:\\Users\\' + name + '\\AppData\\Local\\Microsoft\\Windows\\Temporary Internet Files\\Content.IE5'
+	
 	#source = r'C:\Users\nick\AppData\Local\Microsoft\Windows\Temporary Internet Files'
-	dest = r'C:\Users\nick\Desktop\artifacts\cache'
+	dest = r'C:\\Users\\' + name + '\\Desktop\\artifacts\\cache'
 	CopyFileContents( source, dest )
 	
 	#list file extensions and store in an Array
 	#file_list = next(os.walk(r'C:\Users\nick\AppData\Local\Microsoft\Windows\Temporary Internet Files\Low\Content.IE5'))[1]
 
-	
-	
-	# for file_list in file_list:        # Second Example
-		# print ('Sub Directory : ', counter, file_list ) 
-		
-	
-	
 def sessionRestore():
 	print ("Enter Session Restore Function")
 	
@@ -98,7 +92,6 @@ def sessionRestore():
 		
 	else:
 		print ("Unable to Create to the Session folder, please check your user privileges")
-	
 	
 	
 def flash():
@@ -148,10 +141,10 @@ def makeDirectory( tehPath ):
 		os.mkdir(os.path.expanduser(tehPath))			
 
 def createHistShortcut():
-	import os, winshell
+	import os
 	from win32com.client import Dispatch
 		
-	#desktop = winshell.desktop()
+	
 	desktop = 'C:\\Users\\' + name + '\\Desktop\\artifacts\\History'
 	path = os.path.join(desktop, "Browsing History.lnk")
 
@@ -197,18 +190,17 @@ def CopyFileContents( sourcePath, destPath ):
 					print('file "' + f + '" already exists')
 
 				
-def main():
-	createRepo();
-	#browserDetection(); 
-	#history();
-	
-	#cookie();
-	#cache();
-	#sessionRestore();
-	flash(); 
+# def main():
+	# createRepo();
+	# browserDetection(); 
+	# history();
+	# cookie();
+	# cache();
+	# sessionRestore();
+	# flash(); 
 	 
 
 
-if __name__ == "__main__":
-	main()
+# if __name__ == "__main__":
+	# main()
 	

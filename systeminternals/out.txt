@@ -1,68 +1,0 @@
-
-Disk Extent Dumper v1.1
-Copyright (C) 2001-2007 Mark Russinovich
-Sysinternals - www.sysinternals.com
-
-Volume: \\?\Volume{4e283019-2984-099e-9a88-df3df39f422e}\
-   Mounted at: H:\
-   Error getting extents
-Access is denied.
-
-Volume: \\?\Volume{284f0d22-2592-43ce-b657-ff8535cbacec}\
-   Mounted at: D:\
-   Error getting extents
-Access is denied.
-
-Volume: \\?\Volume{4fc76dd2-27d8-11e4-824c-806e6f6e6963}\
-   Mounted at: E:\
-   Error getting extents
-Access is denied.
-
-Volume: \\?\Volume{bd0281b3-3ae0-11e4-8278-485b39702024}\
-   Mounted at: K:\
-   Error getting extents
-Access is denied.
-
-Volume: \\?\Volume{d33b175f-3ec6-11e4-828c-485b39702024}\
-   Mounted at: F:\
-   Extent [1]:
-       Disk:   4
-       Offset: 1048576
-       Length: 600124162048
-Volume: \\?\Volume{4fc76dd0-27d8-11e4-824c-806e6f6e6963}\
-   Mounted at: <unmounted>
-   Error getting extents
-Access is denied.
-
-Volume: \\?\Volume{4b30a2bb-580a-00ad-4004-6b186a321e3b}\
-   Mounted at: J:\
-   Extent [1]:
-       Disk:   6
-       Offset: 20480
-       Length: 17592051789312
-Volume: \\?\Volume{847bd322-e487-4209-947f-e64f65e45c4d}\
-   Mounted at: I:\
-   Extent [1]:
-       Disk:   7
-       Offset: 134235136
-       Length: 17592051792384
-Volume: \\?\Volume{690a69a4-2875-11e4-8258-000272d42b27}\
-   Mounted at: L:\
-   Extent [1]:
-       Disk:   8
-       Offset: 32256
-       Length: 522158592
-Volume: \\?\Volume{4fc76dd1-27d8-11e4-824c-806e6f6e6963}\
-   Mounted at: C:\
-   Error getting extents
-Access is denied.
-
-Volume: \\?\Volume{690a69c2-2875-11e4-8258-000272d42b27}\
-   Mounted at: <unmounted>
-   Error getting extents
-The system cannot find the file specified.
-
-Volume: \\?\Volume{4fc76dd6-27d8-11e4-824c-806e6f6e6963}\
-   Mounted at: G:\
-   No Extents
-
